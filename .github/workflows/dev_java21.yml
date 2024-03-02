@@ -20,8 +20,9 @@ env:
   SETUP_JAVA_CACHE: 'maven'
 
 jobs:
-  build:
-    name: Build Backend
+  test:
+    name: Run Backend Unit Tests
+    needs: build
     runs-on: ubuntu-latest
     steps:
       - name: Checkout backend repository
@@ -34,9 +35,11 @@ jobs:
           distribution: ${{ env.JAVA_DISTRIBUTION }}
           cache: ${{ env.SETUP_JAVA_CACHE }}
 
-      - name: Build a JAR package via Maven
-
-        run: mvn --batch-mode --no-transfer-progress -DskipTests clean package && ls -la
+      - name: Download JAR artifact
+        uses: actions/download-artifact@v4
+        with:
+          name: my-jar
+          path: ./core
 
       - name: Run Unit Tests via Maven
         run: mvn --batch-mode --no-transfer-progress clean test
@@ -62,3 +65,26 @@ jobs:
             service-api/target/surefire-reports/*.xml
           reporter: java-junit
           fail-on-error: true
+  build:
+    name: Build Backend
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout backend repository
+        uses: actions/checkout@b4ffde65f46336ab88eb53be808477a3936bae11     # v4.1.1
+
+      - name: Set up JDK
+        uses: actions/setup-java@387ac29b308b003ca37ba93a6cab5eb57c8f5f93   # v4.0.0
+        with:
+          java-version: ${{ env.JAVA_VERSION }}
+          distribution: ${{ env.JAVA_DISTRIBUTION }}
+          cache: ${{ env.SETUP_JAVA_CACHE }}
+
+      - name: Build a JAR package via Maven
+
+        run: mvn --batch-mode --no-transfer-progress -DskipTests clean package && ls -la
+
+      - name: Upload JAR artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: my-jar
+          path: ./core
