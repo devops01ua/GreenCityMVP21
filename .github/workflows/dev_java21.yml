@@ -39,6 +39,7 @@ jobs:
         uses: actions/download-artifact@v4
         with:
           name: my-jar
+          path: .core/
 
       - name: Run Unit Tests via Maven
         run: mvn --batch-mode --no-transfer-progress clean test
