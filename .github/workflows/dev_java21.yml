@@ -34,6 +34,11 @@ jobs:
           java-version: ${{ env.JAVA_VERSION }}
           distribution: ${{ env.JAVA_DISTRIBUTION }}
           cache: ${{ env.SETUP_JAVA_CACHE }}
+          
+      - name: Download JAR artifact
+        uses: actions/download-artifact@5d5d22a31266ced268874388b861e4b58bb5c2f3
+        with:
+          name: my-jar
 
       - name: Run Unit Tests via Maven
         run: mvn --batch-mode --no-transfer-progress clean test
@@ -76,3 +81,8 @@ jobs:
 
       - name: Build a JAR package via Maven
         run: mvn --batch-mode --no-transfer-progress -DskipTests clean package
+      - name: Upload JAR artifact
+        uses: actions/upload-artifact@5d5d22a31266ced268874388b861e4b58bb5c2f3
+        with:
+          name: my-jar
+          path: target/*.jar
