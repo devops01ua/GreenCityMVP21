@@ -12,6 +12,7 @@ on:
       - main
       - master
       - dev_java21
+      - my_dev_java21
 
 env:
   JAVA_VERSION: 21
